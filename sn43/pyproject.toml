@@ -1,0 +1,42 @@
+[project]
+name = "sn43"
+version = "0.1.0"
+description = "Bittensor SN43 — Decentralized Financial Knowledge Graph"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "aiofiles>=24.1.0",
+    "aiohttp>=3.10.11",
+    "bittensor==10.3.0",
+    "bittensor-cli>=9.21.0",
+    "click>=8.0.0",
+    "python-dotenv>=0.9.9",
+    "fastapi>=0.110.1,<0.111.0",
+    "requests>=2.32.5",
+    "uvicorn>=0.23.0",
+    "numpy>=2.0.1,<2.1.0",
+    "networkx>=3.0,<3.5",
+    "httpx>=0.27.0",
+    "pydantic>=2.9,<2.13",
+    "mcp>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3,<9.0",
+    "pytest-asyncio>=0.23,<0.26",
+]
+
+[tool.setuptools.packages.find]
+include = ["sn43", "neurons", "envs", "storage", "central_server", "mcp_server"]
+
+[project.scripts]
+sn43 = "sn43.__main__:main"
+neurons = "neurons:cli"
+
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.uv.sources]
+sn43 = { path = ".", editable = true }

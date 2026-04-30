@@ -1,0 +1,3 @@
+[console_scripts]
+neurons = neurons:cli
+sn43 = sn43.__main__:main

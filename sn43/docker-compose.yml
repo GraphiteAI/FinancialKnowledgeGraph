@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  sn43-validator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./data:/app/data:rw
+      - ./.env:/app/.env:ro
+      - ./neurons:/app/neurons:ro
+      - ./sn43:/app/sn43:ro
+      - ./envs:/app/envs:ro
+      - ./storage:/app/storage:ro
+      - ./ingestion:/app/ingestion:ro
+      - ./sandbox:/app/sandbox:ro
+      - ~/.bittensor/wallets:/root/.bittensor/wallets:ro
+    # Event bus listens on EVENT_BUS_PORT (default 8765); expose to miners.
+    ports:
+      - "8765:8765"
+    restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
