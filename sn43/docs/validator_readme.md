@@ -19,21 +19,6 @@ The validator is a single async process (`python -m neurons validator`). It:
 
 ## Running
 
-### With Docker (recommended)
-
-```bash
-cd sn43
-cp .env.example .env
-# Edit .env: set BT_WALLET_COLD, BT_WALLET_HOT, SN43_EDGAR_CONTACT
-
-docker compose up -d
-docker compose logs -f sn43-validator
-```
-
-The compose file exposes port `8765` — miners connect here over WebSocket.
-
-### Without Docker
-
 ```bash
 cd sn43
 pip install -e ".[dev]"
