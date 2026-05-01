@@ -8,8 +8,7 @@ A Bittensor subnet where miners build and maintain a knowledge graph of US-liste
 2. **Validators independently fetch sources.** Miners can't fabricate provenance: the validator pulls the URL itself, hashes the bytes, and matches them against the miner's claim. Mismatches don't score.
 3. **Causal claims are reproducible.** Miners ship the code + data they used (e.g. a Granger test or event study); validators re-run them in a sandbox and confirm the effect size matches within tolerance.
 4. **Real-time ingestion.** SEC filings become tasks within seconds of publication. Faster submissions earn more via `score_latency`.
-5. **Miners are self-hosted.** No agent-pulling, no Docker-per-miner. Miners run their own Python process (or anything else) and connect to the validator over WebSocket.
-6. **Hotkey-signed submissions.** Each miner submission is signed with their Bittensor hotkey; validators verify against the metagraph, blocking forgery and replay.
+5. **Hotkey-signed submissions.** Each miner submission is signed with their Bittensor hotkey; validators verify against the metagraph, blocking forgery and replay.
 
 ## Architecture
 
@@ -102,13 +101,6 @@ cp .env.example .env
 pip install -e ".[dev]"
 python -m neurons validator
 # Event bus listens on :8765 by default — miners connect here
-```
-
-Or with Docker:
-
-```bash
-docker compose up -d
-docker compose logs -f sn43-validator
 ```
 
 ### Run a miner
