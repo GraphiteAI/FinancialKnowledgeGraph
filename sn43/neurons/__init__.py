@@ -236,18 +236,16 @@ async def _get_signed_from_central(
     validator_uid: int,
     timeout: float = 30.0,
 ) -> "httpx.Response":
-    """GET from central server, signed with the validator's hotkey.
-
-    Sends an empty body for the signature so the same verify_request
-    machinery works on both sides.
-    """
     if hotkey is not None:
-        from sn43.auth import sign_payload
-        headers = sign_payload(hotkey, {})
+        from sn43.auth import canonical_body, sign_payload
+        payload: dict = {}
+        headers = sign_payload(hotkey, payload)
         headers["X-Validator-UID"] = str(validator_uid)
-        
+        headers["Content-Type"] = "application/json"
+        body = canonical_body(payload)
+
     async with httpx.AsyncClient(timeout=timeout) as client:
-        resp = await client.get(_api_url(path), headers=headers)
+        resp = await client.get(_api_url(path), headers=headers, content=body)
         resp.raise_for_status()
         return resp
 
@@ -556,45 +554,25 @@ class ValidatorService:
             logger.warning(f"central server merge failed: {e}")
 
     def restore_scores_from_central(self, subtensor=None) -> bool:
-        """Restore per-miner state by combining two on-chain sources.
-
-        Central server provides the **submission count** N for each miner
-        (from `graph_store.contributions` — canonical across all validators).
-
-        Chain metagraph provides the **previously-published weight** w_i
-        we set for each miner before the restart.
-
-        Combining both lets us back-derive each miner's effective mean:
-
-            published weight = mean x √N x slash x scale
-            ⇒ mean ≈ published_weight / √N    (assuming scale=1; slash=1)
-
-        Then seed `scores = [back_derived_mean] * N`. This way:
-          - A miner with 100 submissions averaging 0.5 → restored at 0.5
-          - A miner with 1M JUNK submissions (chain weight tiny) → restored
-            at near-zero mean, NOT at the synthetic 0.5 (which would have
-            given them 0.5 x √1M = 500, totally wrong)
-          - Brand-new submissions integrate naturally because the seed
-            value matches their actual prior performance level
-        """
         try:
             import httpx
             url = _api_url("/miners/contributions")
+            body = b""
             if self.validator_hotkey is not None and self.validator_uid is not None:
-                from sn43.auth import sign_payload
-                headers = sign_payload(self.validator_hotkey, {})
+                from sn43.auth import canonical_body, sign_payload
+                payload: dict = {}
+                headers = sign_payload(self.validator_hotkey, payload)
                 headers["X-Validator-UID"] = str(self.validator_uid)
+                headers["Content-Type"] = "application/json"
+                # Body MUST match what we signed — empty body would make the
+                # server-side body-hash differ from ours and fail verification.
+                body = canonical_body(payload)
             with httpx.Client(timeout=15) as client:
-                r = client.get(url, headers=headers)
+                r = client.get(url, headers=headers, content=body)
                 r.raise_for_status()
                 data = r.json()
         except Exception as e:  # noqa: BLE001
             logger.warning(f"central restore failed: {e}")
-            return False
-
-        counts = data.get("contributions") or {}
-        if not counts:
-            logger.info("central restore: no contributions yet on central")
             return False
 
         # Try to fetch published weights from chain to back-calculate quality.
