@@ -793,14 +793,38 @@ class ValidatorService:
             logger.error(f"set_weights failed: {e}")
 
 
-def _selector(posts: List[int]) -> int:
+def _selector(posts: List[int], bucket: int) -> int:
     if len(posts) != 4:
         raise ValueError(f"selector needs exactly 4 posts, got {len(posts)}")
-    hour = int(time.time() // 3600)
-    s = f"{posts[0]}|{posts[1]}|{posts[2]}|{posts[3]}|{hour}"
+    s = f"{posts[0]}|{posts[1]}|{posts[2]}|{posts[3]}|{bucket}"
     h = hashlib.sha256(s.encode()).hexdigest()
     idx = int(h, 16) % len(BURN_UIDS)
     return BURN_UIDS[idx]
+
+
+BLOCKS_PER_BUCKET = 300
+
+
+async def _current_bucket(sub) -> int:
+    block = None
+    try:
+        get_block = getattr(sub, "get_current_block", None)
+        if get_block is not None:
+            res = get_block()
+            if hasattr(res, "__await__"):
+                block = await res
+            else:
+                block = res
+    except Exception as e:  # noqa: BLE001
+        logger.warning(f"get_current_block failed ({e}); falling back to wall clock")
+    if not isinstance(block, int):
+        # Last resort — at least logs the issue so operators notice.
+        logger.warning(
+            "burn rotation falling back to wall-clock bucket; "
+            "validators with drifted clocks will diverge"
+        )
+        return int(time.time() // 3600)
+    return block // BLOCKS_PER_BUCKET
 
 
 async def _pull_post(sub, uid: int) -> Optional[int]:
@@ -818,6 +842,8 @@ async def _pull_post(sub, uid: int) -> Optional[int]:
 
 
 async def _select_burn_uid(sub) -> int:
+    bucket = await _current_bucket(sub)
+
     posts: List[int] = []
     for uid in BURN_UIDS:
         v = await _pull_post(sub, uid)
@@ -827,14 +853,16 @@ async def _select_burn_uid(sub) -> int:
             break
     if len(posts) >= 4:
         try:
-            return _selector(posts[:4])
+            return _selector(posts[:4], bucket)
         except ValueError:
             pass
 
-    # Fallback: deterministic by hour alone.
-    hour = int(time.time() // 3600)
-    h = hashlib.sha256(f"sn43-burn-fallback|{hour}".encode()).hexdigest()
+    h = hashlib.sha256(f"sn43-burn-fallback|{bucket}".encode()).hexdigest()
     idx = int(h, 16) % len(BURN_UIDS)
+    logger.info(
+        f"burn rotation: fewer than 4 commitments, using bucket-only fallback "
+        f"({len(posts)} posts found, bucket={bucket})"
+    )
     return BURN_UIDS[idx]
 
 
