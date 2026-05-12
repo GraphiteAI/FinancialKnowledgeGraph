@@ -197,7 +197,7 @@ class DiscoveryRateLimiter:
     v1 soft limit; add persistence or a token-bucket when spam becomes real.
     """
 
-    def __init__(self, max_per_day: int = 10) -> None:
+    def __init__(self, max_per_day: int = 10000) -> None:
         self.max_per_day = max_per_day
         self._counts: dict[tuple[int, str], int] = {}
 
