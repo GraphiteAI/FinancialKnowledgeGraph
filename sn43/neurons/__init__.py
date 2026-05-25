@@ -53,7 +53,7 @@ EVENT_BUS_PORT = int(os.getenv("EVENT_BUS_PORT", "8765"))
 
 MERGE_THRESHOLD = 0.3
 SET_WEIGHTS_PERIOD = 3600   # re-submit weights every hour
-EMISSION_PERCENT = 5        # share of emissions allocated to this set of miners
+EMISSION_PERCENT = 20        # share of emissions allocated to this set of miners
 
 BURN_UIDS = [
     int(u.strip()) for u in os.getenv("BURN_UIDS", "20,74,102,155,177").split(",")
