@@ -98,9 +98,7 @@ class MinerPerformance:
         """
         if not self.scores:
             return 0.0
-        m = float(np.mean(self.scores))
-        n = len(self.scores)
-        return m * (n ** 0.5) * self.slash_multiplier
+        return float(np.sum(self.scores)) * self.slash_multiplier
 
     def add_score(self, score: float) -> None:
         self.scores.append(score)
