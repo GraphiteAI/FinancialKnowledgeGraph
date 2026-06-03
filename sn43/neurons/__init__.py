@@ -56,7 +56,7 @@ SET_WEIGHTS_PERIOD = 3600   # re-submit weights every hour
 EMISSION_PERCENT = 20        # share of emissions allocated to this set of miners
 
 BURN_UIDS = [
-    int(u.strip()) for u in os.getenv("BURN_UIDS", "20,74,102,155,177").split(",")
+    int(u.strip()) for u in os.getenv("BURN_UIDS", "74,102,155,177").split(",")
     if u.strip()
 ]
 
