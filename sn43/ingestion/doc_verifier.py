@@ -56,6 +56,49 @@ _DEFAULT_WHITELIST = {
     "wipo.int",           # World Intellectual Property Organization
     "courtlistener.com",  # US federal court records (RECAP)
 
+    # Hong Kong
+    "hkexnews.hk",        # HKEXnews — HKEX statutory filings portal (adapter source)
+    "hkex.com.hk",        # Hong Kong Exchanges and Clearing
+    "sfc.hk",             # Securities & Futures Commission (HK regulator)
+    # China
+    "cninfo.com.cn",      # CNINFO — CSRC-designated disclosure site (adapter source)
+    "sse.com.cn",         # Shanghai Stock Exchange
+    "szse.cn",            # Shenzhen Stock Exchange
+    "csrc.gov.cn",        # China Securities Regulatory Commission
+    # Japan
+    "edinet-fsa.go.jp",   # EDINET — FSA electronic disclosure (adapter source)
+    "fsa.go.jp",          # Financial Services Agency (Japan)
+    "jpx.co.jp",          # Japan Exchange Group (Tokyo Stock Exchange)
+    "tdnet.info",         # TDnet — TSE timely disclosure
+    # South Korea
+    "fss.or.kr",          # Financial Supervisory Service (runs DART → dart.fss.or.kr)
+    "krx.co.kr",          # Korea Exchange
+    # Canada
+    "sedarplus.ca",       # SEDAR+ — CSA national filing system (adapter source)
+    "osc.ca",             # Ontario Securities Commission
+    "securities-administrators.ca",  # Canadian Securities Administrators
+    # United Kingdom
+    "data.fca.org.uk",    # FCA National Storage Mechanism (regulated info / RNS)
+    "fca.org.uk",         # Financial Conduct Authority
+    "company-information.service.gov.uk",  # Companies House (find-and-update.*)
+    "londonstockexchange.com",  # London Stock Exchange / RNS announcements
+    # Taiwan
+    "twse.com.tw",        # Taiwan Stock Exchange — MOPS at mops.twse.com.tw (adapter source)
+    "tpex.org.tw",        # Taipei Exchange
+    # India
+    "bseindia.com",       # Bombay Stock Exchange (adapter source)
+    "nseindia.com",       # National Stock Exchange of India
+    "sebi.gov.in",        # Securities and Exchange Board of India
+    # Australia
+    "asx.com.au",         # Australian Securities Exchange
+    "asic.gov.au",        # Australian Securities & Investments Commission
+    # Singapore
+    "sgx.com",            # Singapore Exchange
+    "mas.gov.sg",         # Monetary Authority of Singapore
+    # Europe (statutory gazettes / national regulators)
+    "bundesanzeiger.de",  # German Federal Gazette (Bundesanzeiger)
+    "amf-france.org",     # Autorité des marchés financiers (France)
+
     # ── Established financial news ──
     "reuters.com",
     "ft.com",
