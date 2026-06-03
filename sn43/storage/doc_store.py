@@ -80,7 +80,8 @@ class DocumentStore:
         if content is None:
             return False
         try:
-            text = content.decode("utf-8", errors="replace")
+            from sn43.pdf_utils import bytes_to_text
+            text = bytes_to_text(content)
         except Exception:
             return False
         return _normalized_contains(text, quoted_text)
